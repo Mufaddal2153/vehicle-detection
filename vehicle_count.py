@@ -8,7 +8,6 @@ from tracker import *
 tracker = EuclideanDistTracker()
 
 # Initialize the videocapture object
-cap = cv2.VideoCapture('parking_project/video3.mp4')
 input_size = 320
 
 # Detection confidence threshold
@@ -128,36 +127,6 @@ def getOutputNames(net):
     layerNames = net.getLayerNames()
     return [layerNames[i - 1] for i in net.getUnconnectedOutLayers()]
 
-def realTime():
-    while True:
-        _, img = cap.read()
-        img = cv2.resize(img,(0,0),None,0.5,0.5)
-        blob = cv2.dnn.blobFromImage(img, 1 / 255, (input_size, input_size), [0, 0, 0], 1, crop=False)
-
-        # Set the input of the network
-        net.setInput(blob)
-    
-        # Feed data to the network
-        outputs = net.forward(getOutputNames(net))
-
-        # Find the objects from the network output
-        postProcess(outputs,img)
-
-        # Draw counting texts in the frame
-        cv2.putText(img, "Total", (110, 40), cv2.FONT_HERSHEY_SIMPLEX, font_size, font_color, font_thickness)
-        cv2.putText(img, "Car:        "+str(freq[0]), (20, 70), cv2.FONT_HERSHEY_SIMPLEX, font_size, font_color, font_thickness)
-        cv2.putText(img, "Motorbike:  "+str(freq[1]), (20, 90), cv2.FONT_HERSHEY_SIMPLEX, font_size, font_color, font_thickness)
-        cv2.putText(img, "Bus:        "+str(freq[2]), (20, 110), cv2.FONT_HERSHEY_SIMPLEX, font_size, font_color, font_thickness)
-        cv2.putText(img, "Truck:      "+str(freq[3]), (20, 140), cv2.FONT_HERSHEY_SIMPLEX, font_size, font_color, font_thickness)
-
-        # Show the frames
-        cv2.imshow('Output', img)
-
-        if cv2.waitKey(1) == ord('q'):
-            break
-    # Finally realese the capture object and destroy all active windows
-    cap.release()
-    cv2.destroyAllWindows()
 
 image_file = 'image1.jpg'
 def from_static_image(image):
@@ -195,5 +164,4 @@ def from_static_image(image):
 
 
 if __name__ == '__main__':
-    # realTime()
     from_static_image(image_file)
